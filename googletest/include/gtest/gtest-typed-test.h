@@ -65,9 +65,9 @@ TYPED_TEST_SUITE(FooTest, MyTypes);
 // Then, use TYPED_TEST() instead of TEST_F() to define as many typed
 // tests for this test suite as you want.
 TYPED_TEST(FooTest, DoesBlah) {
-  // Inside a test, refer to TypeParam to get the type parameter.
-  // Since we are inside a derived class template, C++ requires use to
-  // visit the members of FooTest via 'this'.
+  // Inside a test, refer to the special name TypeParam to get the type
+  // parameter.  Since we are inside a derived class template, C++ requires
+  // us to visit the members of FooTest via 'this'.
   TypeParam n = this->value_;
 
   // To visit static members of the fixture, add the TestFixture::
@@ -188,9 +188,6 @@ INSTANTIATE_TYPED_TEST_SUITE_P(My, FooTest, MyTypes);
 #define GTEST_NAME_GENERATOR_(TestSuiteName) \
   gtest_type_params_##TestSuiteName##_NameGenerator
 
-// The 'Types' template argument below must have spaces around it
-// since some compilers may choke on '>>' when passing a template
-// instance (e.g. Types<int>)
 #define TYPED_TEST_SUITE(CaseName, Types, ...)                           \
   typedef ::testing::internal::TypeList<Types>::type GTEST_TYPE_PARAMS_( \
       CaseName);                                                         \
@@ -226,7 +223,9 @@ INSTANTIATE_TYPED_TEST_SUITE_P(My, FooTest, MyTypes);
 
 // Legacy API is deprecated but still available
 #ifndef GTEST_REMOVE_LEGACY_TEST_CASEAPI_
-#define TYPED_TEST_CASE TYPED_TEST_SUITE
+#define TYPED_TEST_CASE                                                \
+  static_assert(::testing::internal::TypedTestCaseIsDeprecated(), ""); \
+  TYPED_TEST_SUITE
 #endif  // GTEST_REMOVE_LEGACY_TEST_CASEAPI_
 
 #endif  // GTEST_HAS_TYPED_TEST
@@ -265,7 +264,9 @@ INSTANTIATE_TYPED_TEST_SUITE_P(My, FooTest, MyTypes);
 
 // Legacy API is deprecated but still available
 #ifndef GTEST_REMOVE_LEGACY_TEST_CASEAPI_
-#define TYPED_TEST_CASE_P TYPED_TEST_SUITE_P
+#define TYPED_TEST_CASE_P                                                 \
+  static_assert(::testing::internal::TypedTestCase_P_IsDeprecated(), ""); \
+  TYPED_TEST_SUITE_P
 #endif  // GTEST_REMOVE_LEGACY_TEST_CASEAPI_
 
 #define TYPED_TEST_P(SuiteName, TestName)                             \
@@ -296,12 +297,12 @@ INSTANTIATE_TYPED_TEST_SUITE_P(My, FooTest, MyTypes);
 
 // Legacy API is deprecated but still available
 #ifndef GTEST_REMOVE_LEGACY_TEST_CASEAPI_
-#define REGISTER_TYPED_TEST_CASE_P REGISTER_TYPED_TEST_SUITE_P
+#define REGISTER_TYPED_TEST_CASE_P                                           \
+  static_assert(::testing::internal::RegisterTypedTestCase_P_IsDeprecated(), \
+                "");                                                         \
+  REGISTER_TYPED_TEST_SUITE_P
 #endif  // GTEST_REMOVE_LEGACY_TEST_CASEAPI_
 
-// The 'Types' template argument below must have spaces around it
-// since some compilers may choke on '>>' when passing a template
-// instance (e.g. Types<int>)
 #define INSTANTIATE_TYPED_TEST_SUITE_P(Prefix, SuiteName, Types, ...)       \
   static bool gtest_##Prefix##_##SuiteName GTEST_ATTRIBUTE_UNUSED_ =        \
       ::testing::internal::TypeParameterizedTestSuite<                      \
@@ -318,7 +319,10 @@ INSTANTIATE_TYPED_TEST_SUITE_P(My, FooTest, MyTypes);
 
 // Legacy API is deprecated but still available
 #ifndef GTEST_REMOVE_LEGACY_TEST_CASEAPI_
-#define INSTANTIATE_TYPED_TEST_CASE_P INSTANTIATE_TYPED_TEST_SUITE_P
+#define INSTANTIATE_TYPED_TEST_CASE_P                                      \
+  static_assert(                                                           \
+      ::testing::internal::InstantiateTypedTestCase_P_IsDeprecated(), ""); \
+  INSTANTIATE_TYPED_TEST_SUITE_P
 #endif  // GTEST_REMOVE_LEGACY_TEST_CASEAPI_
 
 #endif  // GTEST_HAS_TYPED_TEST_P
