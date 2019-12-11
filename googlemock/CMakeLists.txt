@@ -114,6 +114,9 @@ if (DEFINED CMAKE_VERSION AND NOT "${CMAKE_VERSION}" VERSION_LESS "2.8.11")
     "$<BUILD_INTERFACE:${gmock_build_include_dirs}>"
     "$<INSTALL_INTERFACE:$<INSTALL_PREFIX>/${CMAKE_INSTALL_INCLUDEDIR}>")
 endif()
+if (CMAKE_CXX_COMPILER_ID MATCHES "Clang")
+    target_compile_options( gmock INTERFACE -Wno-gnu-zero-variadic-macro-arguments )
+endif()
 
 ########################################################################
 #
